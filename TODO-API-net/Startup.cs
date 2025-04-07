@@ -1,5 +1,6 @@
 ﻿using FluentMigrator.Runner;
 using konnect_player_info.Model.Manager;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -7,6 +8,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MySql.Data.MySqlClient;
 using System;
+
+using TODO_API_net.Models.basicAuth;
+using static TODO_API_net.Models.basicAuth.BasicAuthServices;
 
 namespace konnect_player_info
 {
@@ -21,6 +25,8 @@ namespace konnect_player_info
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<IBasicAuthService, BasicAuthService>();
+
             var db_host = Environment.GetEnvironmentVariable("DB_HOST");
             var db_port = Environment.GetEnvironmentVariable("DB_PORT");
             var db_name = Environment.GetEnvironmentVariable("DB_NAME");
@@ -33,6 +39,10 @@ namespace konnect_player_info
             BaseManager.ConnectionString = conn; 
 
             services.AddTransient<MySqlConnection>(_ => new MySqlConnection(conn));
+
+            BasicAuthServices.conn = conn;
+            services.AddAuthentication("BasicAuthentication")
+                .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
 
             services.AddFluentMigratorCore()
                 .ConfigureRunner(rb => rb
@@ -50,6 +60,7 @@ namespace konnect_player_info
             {
                 app.UseDeveloperExceptionPage();
             }
+
 
             using (var scope = app.ApplicationServices.CreateScope())
             {
@@ -84,6 +95,7 @@ namespace konnect_player_info
 
 
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {

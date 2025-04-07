@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters.Xml;
 using TODO_API_net.Models.Generic;
@@ -9,6 +10,7 @@ namespace TODO_API_net.Controllers
 {
     [Route("Todo/")]
     [ApiController]
+    [Authorize]
     public class TodoController : ControllerBase
     {
 

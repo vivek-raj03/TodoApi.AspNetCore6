@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using UserAPI.Models;
 
 [Route("User/")]
 [ApiController]
+[Authorize]
 public class UserController : ControllerBase
 {
 
@@ -86,7 +88,7 @@ public class UserController : ControllerBase
 
         return Ok(new { message = "User data Deleted successfully." });
     }
-
+    [AllowAnonymous]
     [HttpPost("NewUser")] // register
     public IActionResult NewUser([FromBody] User user)
     {
@@ -102,6 +104,7 @@ public class UserController : ControllerBase
         return Ok(new { message = "User Created Successfully" });
     }
 
+    [AllowAnonymous]
     [HttpPost("Login")]
     public IActionResult Login([FromBody] UserLogin UserLogin)
     {
